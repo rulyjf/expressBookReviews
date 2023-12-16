@@ -9,12 +9,13 @@ const findByAuthor = (dictionary, author) => {
   let listMatch = [];
   for (let isbn in dictionary) {
     if (dictionary[isbn].author.includes(author)) {
-      let match = dictionary[isbn];
-      match["isbn"] = isbn;
-      listMatch.push(match);
+      listMatch.push(dictionary[isbn]);
     }
   }
-  return JSON.stringify(listMatch);
+  let result = {};
+  result["booksbyauthor"] = listMatch;
+
+  return JSON.stringify(result);
 };
 
 const findByTitles = (dictionary, title) => {
@@ -22,11 +23,12 @@ const findByTitles = (dictionary, title) => {
   for (let isbn in dictionary) {
     if (dictionary[isbn].title.includes(title)) {
       let match = dictionary[isbn];
-      match["isbn"] = isbn;
       listMatch.push(match);
     }
   }
-  return JSON.stringify(listMatch);
+  let result = {};
+  result["booksbytitle"] = listMatch;
+  return JSON.stringify(result);
 };
 
 public_users.post("/register", (req, res) => {
@@ -38,7 +40,9 @@ public_users.post("/register", (req, res) => {
       users.push({ username: username, password: password });
       return res
         .status(200)
-        .json({ message: "User successfully registred. Now you can login" });
+        .json({
+          message: "Customer successfully registred. Now you can login",
+        });
     } else {
       return res.status(404).json({ message: "User already exists!" });
     }
@@ -48,15 +52,7 @@ public_users.post("/register", (req, res) => {
 // Get the book list available in the shop
 public_users.get("/", function (req, res) {
   const data = new Promise((resolve, reject) => {
-    let bookView = [];
-    for (isbn in Object.keys(books)) {
-      let book = books[isbn];
-      if (book) {
-        book["isbn"] = isbn;
-        bookView.push(book);
-      }
-    }
-    resolve(bookView);
+    resolve(books);
   });
 
   data
@@ -75,9 +71,6 @@ public_users.get("/isbn/:isbn", function (req, res) {
   const data = new Promise((resolve, reject) => {
     const isbn = req.params.isbn;
     let book = books[isbn];
-    if (book) {
-      book["isbn"] = isbn;
-    }
     resolve(book);
   });
 
@@ -104,6 +97,7 @@ public_users.get("/author/:author", function (req, res) {
       return res.send(result);
     })
     .catch((error) => {
+      console.log(error);
       return res
         .status(422)
         .json({ message: "error while processing the request" });
@@ -122,6 +116,7 @@ public_users.get("/title/:title", function (req, res) {
       return res.send(result);
     })
     .catch((error) => {
+      console.log(error);
       return res
         .status(422)
         .json({ message: "error while processing the request" });
@@ -140,6 +135,7 @@ public_users.get("/review/:isbn", function (req, res) {
       return res.send(JSON.stringify(result));
     })
     .catch((error) => {
+      console.log(error);
       return res
         .status(422)
         .json({ message: "error while processing the request" });

@@ -49,7 +49,7 @@ regd_users.post("/login", (req, res) => {
       accessToken,
       username,
     };
-    return res.status(200).send("User successfully logged in");
+    return res.status(200).send("Customer successfully logged in");
   } else {
     return res
       .status(208)
@@ -70,7 +70,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       if (comment) review["comment"] = comment;
       if (rating) review["rating"] = rating;
       return res.send(
-        "The review from " + " " + req.user.data + " Has been updated!"
+        "The review for the book with isbn " + isbn + " Has been added/updated!"
       );
     } else {
       book.reviews[req.user.data] = {
@@ -79,7 +79,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         date: currDate.toString(),
       };
       return res.send(
-        "The review from " + " " + req.user.data + " Has been added!"
+        "The review for the book with isbn " + isbn + " Has been added/updated!"
       );
     }
   }
@@ -93,7 +93,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     let review = book.reviews[req.user.data];
     if (review) {
       delete books[isbn].reviews[req.user.data];
-      res.send(`the review has been successfully deleted.`);
+      res.send(`Reviews for the ISBN ${isbn} has been successfully deleted.`);
     } else {
       res.send(`unable to find your comment in this book review`);
     }
