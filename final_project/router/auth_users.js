@@ -94,7 +94,9 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     let review = book.reviews[req.user.data];
     if (review) {
       delete books[isbn].reviews[req.user.data];
-      res.send(`Reviews for the ISBN ${isbn} has been successfully deleted.`);
+      res.send(
+        `Reviews for the ISBN ${isbn} posted by the user ${req.user.data} deleted.`
+      );
     } else {
       res.send(`unable to find your comment in this book review`);
     }
