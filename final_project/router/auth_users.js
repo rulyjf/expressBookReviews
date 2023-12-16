@@ -60,22 +60,23 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
+  const userReview = req.query.review;
   let book = books[isbn];
   const currDate = new Date();
-  const comment = req.body.comment;
-  const rating = req.body.rating;
   if (book) {
-    let review = book.reviews[req.user.data];
-    if (review) {
-      if (comment) review["comment"] = comment;
-      if (rating) review["rating"] = rating;
+    let reviewISBN = book.reviews[req.user.data];
+    if (reviewISBN) {
+      if (userReview) {
+        reviewISBN["review"] = userReview;
+        reviewISBN["date"] = urrDate.toString();
+      }
+
       return res.send(
         "The review for the book with isbn " + isbn + " Has been added/updated!"
       );
     } else {
       book.reviews[req.user.data] = {
-        comment: comment,
-        rating: rating,
+        review: userReview,
         date: currDate.toString(),
       };
       return res.send(
